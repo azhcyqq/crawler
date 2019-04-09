@@ -261,6 +261,7 @@ var timer = setInterval(getDetail, 1000)
 //2019-3-21爬取各影音主地址
 //2019-3-22爬取各影音分集地址
 //2019-3-22完成全部影音分集地址 下周目标，分类a-z全部影音分集，并完成mp4视频播放地址爬取
+//2019-4-9基本完成所有内容，等待爬取
 
 function getPlayAddress() {
 	let count = 0;
