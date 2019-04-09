@@ -306,24 +306,26 @@ function saveDb(){
 	for(let i=0;i<azAnima.length;i++){
 		var code = String.fromCharCode('a'.charCodeAt() + i)
 		for(let j=0;j<allData[code].length;j++){
-			new Anime({
-				az:code,
-				uris:allData[code][j].uris,
-				play:allData[code][j].play,
-				titles:allData[code][j].titles,
-				name:allData[code][j].name,
-				introduce:allData[code][j].introduce,
-				img:allData[code][j].img,
-				tag:allData[code][j].tag
-			}).save((err,res)=>{
-				if(err){
-					console.log(err)
-					errNum++
-				}
-				else{
-					console.log('succeed')
-				}
-			})
+			(function(code,j){
+				new Anime({
+					az:code,
+					uris:allData[code][j].uris,
+					play:allData[code][j].play,
+					titles:allData[code][j].titles,
+					name:allData[code][j].name,
+					introduce:allData[code][j].introduce,
+					img:allData[code][j].img,
+					tag:allData[code][j].tag
+				}).save((err,res)=>{
+					if(err){
+						console.log(err)
+						errNum++
+					}
+					else{
+						console.log('succeed')
+					}
+				})
+			})(code,j)
 		}
 	}
 }
