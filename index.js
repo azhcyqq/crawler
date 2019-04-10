@@ -2,7 +2,7 @@
 //运用模块为crawler后续会作为接口传递数据
 //2019/3/22  author:PRball
 //引入mongoose模块
-const Anime = require('./mongo.js')
+//const Anime = require('./mongo.js')
 //引入cheerio模块
 const cheerio = require('cheerio')
 //引用crawler爬虫模块
@@ -63,7 +63,7 @@ const c = new crawler({
 	jQuery: true,
 	encoding: 'utf8',
 	//爬取池最大20
-	maxConnections: 20,
+	maxConnections: 5,
 	timeout: 5000
 })
 //c.queue(azAnima)
@@ -73,7 +73,7 @@ const c = new crawler({
 //完成爬取后改变各对应status为true
 function getazUrl() {
 	for(var i = 0; i < azAnima.length; i++) {
-		function getit() {
+		function getit(i) {
 			var num = i
 			c.queue({
 				uri: azAnima[num],
@@ -82,17 +82,17 @@ function getazUrl() {
 					let aList = $('.anime_list dl dt a')
 					let a = String.fromCharCode('a'.charCodeAt() + num)
 					let tagArr = []
-//					console.log(!!$('.anime_list').html())
+					
 					if(!!$('.anime_list').html()) {
 						let changebody = $('.anime_list').html().replace(/(<b>&#x6807;&#x7B7E;&#xFF1A;<\/b>)+/g, '<i class="cherryboy">标签</i>');
-						
 						let c = cheerio.load(changebody)
 						for(let j=0;j<c('.cherryboy').length;j++){
 							let temparr=[];
-							if(c('.cherryboy').parent()[j].children[i]){
+							if(c('.cherryboy').parent()[j].children[1]){
 								for(let i = 1; i < c('.cherryboy').parent()[j].children.length; i++) {
-//									console.log(c('.cherryboy').parent()[j].children[i].children[0].data)
-									temparr.push(c('.cherryboy').parent()[j].children[i].children[0].data)
+									if(c('.cherryboy').parent()[j].children[i].children){
+										temparr.push(c('.cherryboy').parent()[j].children[i].children[0].data)	
+									}
 								}
 							}	
 							tagArr.push(temparr)
@@ -113,7 +113,7 @@ function getazUrl() {
 				}
 			})
 		}
-		getit();
+		getit(i);
 	}
 }
 //判断status是否全部完成并执行azUrlData内部url的逐步爬取
@@ -242,7 +242,10 @@ function getData(i) {
 function redo(i) {
 	//递归至完成
 	if(i > azAnima.length - 1) {
-		getPlayAddress();
+//		getPlayAddress();
+		fs.writeFile('index.html',JSON.stringify(allData),function(){
+			console.log('done')
+		})
 		return
 	}
 	//封装的promise函数递归调用
@@ -303,30 +306,30 @@ function getPlayAddress() {
 
 
 //保存至mongodb数据库
-function saveDb(){
-	for(let i=0;i<azAnima.length;i++){
-		var code = String.fromCharCode('a'.charCodeAt() + i)
-		for(let j=0;j<allData[code].length;j++){
-			(function(code,j){
-				new Anime({
-					az:code,
-					uris:allData[code][j].uris,
-					play:allData[code][j].play,
-					titles:allData[code][j].titles,
-					name:allData[code][j].name,
-					introduce:allData[code][j].introduce,
-					img:allData[code][j].img,
-					tag:allData[code][j].tag
-				}).save((err,res)=>{
-					if(err){
-						console.log(err)
-						errNum++
-					}
-					else{
-						console.log('succeed')
-					}
-				})
-			})(code,j)
-		}
-	}
-}
+//function saveDb(){
+//	for(let i=0;i<azAnima.length;i++){
+//		var code = String.fromCharCode('a'.charCodeAt() + i)
+//		for(let j=0;j<allData[code].length;j++){
+//			(function(code,j){
+//				new Anime({
+//					az:code,
+//					uris:allData[code][j].uris,
+//					play:allData[code][j].play,
+//					titles:allData[code][j].titles,
+//					name:allData[code][j].name,
+//					introduce:allData[code][j].introduce,
+//					img:allData[code][j].img,
+//					tag:allData[code][j].tag
+//				}).save((err,res)=>{
+//					if(err){
+//						console.log(err)
+//						errNum++
+//					}
+//					else{
+//						console.log('succeed')
+//					}
+//				})
+//			})(code,j)
+//		}
+//	}
+//}

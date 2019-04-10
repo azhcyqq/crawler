@@ -4,7 +4,7 @@ let Schema = mongoose.Schema;
 let crawlerData = new Schema({
 	az:{
 		type:String
-	}
+	},
 	uris:{
 		type:Array,
 	},
@@ -28,4 +28,4 @@ let crawlerData = new Schema({
 	}
 })
 
-module.exports = mongoose.model('Anime', blogSchema);
+module.exports = mongoose.model('Anime', crawlerData);
