@@ -1,8 +1,12 @@
 //此项目是针对某具体网站，对其视频的播放地址与具体数据进行爬取
 //运用模块为crawler后续会作为接口传递数据
 //2019/3/22  author:PRball
+
+//暂时停用，测试其他功能
 //引入mongoose模块
 //const Anime = require('./mongo.js')
+
+
 //引入cheerio模块
 const cheerio = require('cheerio')
 //引用crawler爬虫模块
@@ -63,7 +67,7 @@ const c = new crawler({
 	jQuery: true,
 	encoding: 'utf8',
 	//爬取池最大20
-	maxConnections: 5,
+	maxConnections: 26,
 	timeout: 5000
 })
 //c.queue(azAnima)
@@ -305,6 +309,7 @@ function getPlayAddress() {
 
 
 
+//暂时停用，测试其他功能
 //保存至mongodb数据库
 //function saveDb(){
 //	for(let i=0;i<azAnima.length;i++){
