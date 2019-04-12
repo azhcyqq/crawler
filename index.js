@@ -4,8 +4,7 @@
 
 //暂时停用，测试其他功能
 //引入mongoose模块
-//const Anime = require('./mongo.js')
-
+const Anime = require('./mongo.js')
 
 //引入cheerio模块
 const cheerio = require('cheerio')
@@ -86,31 +85,31 @@ function getazUrl() {
 					let aList = $('.anime_list dl dt a')
 					let a = String.fromCharCode('a'.charCodeAt() + num)
 					let tagArr = []
-					
+
 					if(!!$('.anime_list').html()) {
 						let changebody = $('.anime_list').html().replace(/(<b>&#x6807;&#x7B7E;&#xFF1A;<\/b>)+/g, '<i class="cherryboy">标签</i>');
 						let c = cheerio.load(changebody)
-						for(let j=0;j<c('.cherryboy').length;j++){
-							let temparr=[];
-							if(c('.cherryboy').parent()[j].children[1]){
+						for(let j = 0; j < c('.cherryboy').length; j++) {
+							let temparr = [];
+							if(c('.cherryboy').parent()[j].children[1]) {
 								for(let i = 1; i < c('.cherryboy').parent()[j].children.length; i++) {
-									if(c('.cherryboy').parent()[j].children[i].children){
-										temparr.push(c('.cherryboy').parent()[j].children[i].children[0].data)	
+									if(c('.cherryboy').parent()[j].children[i].children) {
+										temparr.push(c('.cherryboy').parent()[j].children[i].children[0].data)
 									}
 								}
-							}	
+							}
 							tagArr.push(temparr)
-							
+
 						}
 					}
-//					console.log(tagArr)
+					//					console.log(tagArr)
 					aList.each(function(index, item) {
 						azUrlData[a].push({
 							url: item.attribs.href,
 							tag: tagArr[index]
 						})
 					})
-//					console.log(azUrlData)
+					//					console.log(azUrlData)
 					console.log('爬取' + a + '成功')
 					done();
 					status[a] = true;
@@ -247,9 +246,9 @@ function redo(i) {
 	//递归至完成
 	if(i > azAnima.length - 1) {
 		getPlayAddress();
-//		fs.writeFile('index.html',JSON.stringify(allData),function(){
-//			console.log('done')
-//		})
+		//		fs.writeFile('index.html',JSON.stringify(allData),function(){
+		//			console.log('done')
+		//		})
 		return
 	}
 	//封装的promise函数递归调用
@@ -273,6 +272,7 @@ var timer = setInterval(getDetail, 1000)
 function getPlayAddress() {
 	let count = 0;
 	let tempCount = 0;
+	let tempCount_d = 0;
 	for(let i in allData) {
 		for(let j = 0; j < allData[i].length; j++) {
 			for(let k = 0; k < allData[i][j].uris.length; k++) {
@@ -283,6 +283,12 @@ function getPlayAddress() {
 							let $　 = res.$;
 							if(!$ || !$('#player_iframe') || !$('#player_iframe')[0]) {
 								console.log('错误')
+								if(i === 'z') {
+									tempCount++;
+									if(tempCount_d === allData[i][j].length - 1) {
+										tempCount_d++;
+									}
+								}
 								done();
 								return
 							}
@@ -290,30 +296,23 @@ function getPlayAddress() {
 							allData[i][j].play[k] = video;
 							console.log('爬取播放地址成功' + i + '中第' + j + '中的第' + k + '集' + (count++) + '个');
 							done();
-							if(i === 'z'){
+							if(i === 'z') {
 								tempCount++;
-								if(tempCount === allData[i].length-1){
-									console.log('全部爬取完成')
-									fs.writeFile('index.html', JSON.stringify(allData), function(err) {
-										if(err) {
-											console.log('文件写入失败')
-											return
-										}
-										console.log('写入成功啊啊啊啊啊啊')
-									})	
+								if(tempCount === allData[i].length - 1) {
+									tempCount_d++
+									if(tempCount_d === allData[i][j].length - 1) {
+										console.log('全部爬取完成')
+										fs.writeFile('index.html', JSON.stringify(allData), function(err) {
+											if(err) {
+												console.log('文件写入失败')
+												return
+											}
+											console.log('写入成功啊啊啊啊啊啊')
+										})
+										saveDb();
+									}
 								}
 							}
-//							if(i === 'z' && j === allData[i].length - 1 && k === allData[i][j].uris.length - 1) {
-//								console.log('全部爬取完成')
-//								fs.writeFile('index.html', JSON.stringify(allData), function(err) {
-//									if(err) {
-//										console.log('文件写入失败')
-//										return
-//									}
-//									console.log('写入成功啊啊啊啊啊啊')
-//								})
-//								
-//							}
 						}
 					})
 				})(i, j, k)
@@ -322,34 +321,31 @@ function getPlayAddress() {
 	}
 }
 
-
-
 //暂时停用，测试其他功能
 //保存至mongodb数据库
-//function saveDb(){
-//	for(let i=0;i<azAnima.length;i++){
-//		var code = String.fromCharCode('a'.charCodeAt() + i)
-//		for(let j=0;j<allData[code].length;j++){
-//			(function(code,j){
-//				new Anime({
-//					az:code,
-//					uris:allData[code][j].uris,
-//					play:allData[code][j].play,
-//					titles:allData[code][j].titles,
-//					name:allData[code][j].name,
-//					introduce:allData[code][j].introduce,
-//					img:allData[code][j].img,
-//					tag:allData[code][j].tag
-//				}).save((err,res)=>{
-//					if(err){
-//						console.log(err)
-//						errNum++
-//					}
-//					else{
-//						console.log('succeed')
-//					}
-//				})
-//			})(code,j)
-//		}
-//	}
-//}
+function saveDb() {
+	for(let i = 0; i < azAnima.length; i++) {
+		var code = String.fromCharCode('a'.charCodeAt() + i)
+		for(let j = 0; j < allData[code].length; j++) {
+			(function(code, j) {
+				new Anime({
+					az: code,
+					uris: allData[code][j].uris,
+					play: allData[code][j].play,
+					titles: allData[code][j].titles,
+					name: allData[code][j].name,
+					introduce: allData[code][j].introduce,
+					img: allData[code][j].img,
+					tag: allData[code][j].tag
+				}).save((err, res) => {
+					if(err) {
+						console.log(err)
+						errNum++
+					} else {
+						console.log('succeed')
+					}
+				})
+			})(code, j)
+		}
+	}
+}
