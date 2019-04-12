@@ -3,7 +3,8 @@ mongoose.connect('mongodb://localhost:27017/crawlerData');
 let Schema = mongoose.Schema;
 let crawlerData = new Schema({
 	az:{
-		type:String
+		type:String,
+		index:true
 	},
 	uris:{
 		type:Array,
@@ -16,6 +17,7 @@ let crawlerData = new Schema({
 	},
 	name:{
 		type:String,
+		index:true
 	},
 	introduce:{
 		type:String,
@@ -25,6 +27,7 @@ let crawlerData = new Schema({
 	},
 	tag:{
 		type:Array,
+		index:true
 	}
 })
 

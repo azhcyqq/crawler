@@ -67,7 +67,7 @@ const c = new crawler({
 	jQuery: true,
 	encoding: 'utf8',
 	//爬取池最大20
-	maxConnections: 26,
+	maxConnections: 10,
 	timeout: 5000
 })
 //c.queue(azAnima)
@@ -103,7 +103,7 @@ function getazUrl() {
 							
 						}
 					}
-					console.log(tagArr)
+//					console.log(tagArr)
 					aList.each(function(index, item) {
 						azUrlData[a].push({
 							url: item.attribs.href,
@@ -246,10 +246,10 @@ function getData(i) {
 function redo(i) {
 	//递归至完成
 	if(i > azAnima.length - 1) {
-//		getPlayAddress();
-		fs.writeFile('index.html',JSON.stringify(allData),function(){
-			console.log('done')
-		})
+		getPlayAddress();
+//		fs.writeFile('index.html',JSON.stringify(allData),function(){
+//			console.log('done')
+//		})
 		return
 	}
 	//封装的promise函数递归调用
@@ -272,6 +272,7 @@ var timer = setInterval(getDetail, 1000)
 
 function getPlayAddress() {
 	let count = 0;
+	let tempCount = 0;
 	for(let i in allData) {
 		for(let j = 0; j < allData[i].length; j++) {
 			for(let k = 0; k < allData[i][j].uris.length; k++) {
@@ -282,23 +283,37 @@ function getPlayAddress() {
 							let $　 = res.$;
 							if(!$ || !$('#player_iframe') || !$('#player_iframe')[0]) {
 								console.log('错误')
+								done();
 								return
 							}
 							let video = $('#player_iframe')[0].attribs.src;
 							allData[i][j].play[k] = video;
 							console.log('爬取播放地址成功' + i + '中第' + j + '中的第' + k + '集' + (count++) + '个');
 							done();
-							if(i === 'z' && j === allData[i].length - 1 && k === allData[i][j].uris.length - 1) {
-								console.log('全部爬取完成')
-								fs.writeFile('index.html', JSON.stringify(allData), function(err) {
-									if(err) {
-										console.log('文件写入失败')
-										return
-									}
-									console.log('写入成功啊啊啊啊啊啊')
-								})
-								
+							if(i === 'z'){
+								tempCount++;
+								if(tempCount === allData[i].length-1){
+									console.log('全部爬取完成')
+									fs.writeFile('index.html', JSON.stringify(allData), function(err) {
+										if(err) {
+											console.log('文件写入失败')
+											return
+										}
+										console.log('写入成功啊啊啊啊啊啊')
+									})	
+								}
 							}
+//							if(i === 'z' && j === allData[i].length - 1 && k === allData[i][j].uris.length - 1) {
+//								console.log('全部爬取完成')
+//								fs.writeFile('index.html', JSON.stringify(allData), function(err) {
+//									if(err) {
+//										console.log('文件写入失败')
+//										return
+//									}
+//									console.log('写入成功啊啊啊啊啊啊')
+//								})
+//								
+//							}
 						}
 					})
 				})(i, j, k)
