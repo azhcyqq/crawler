@@ -5,7 +5,8 @@
 //暂时停用，测试其他功能
 //引入mongoose模块
 const Anime = require('./mongo.js')
-	
+//引入拼音模块
+const pinyin = require('pinyin')
 //引入cheerio模块
 const cheerio = require('cheerio')
 //引用crawler爬虫模块
@@ -126,7 +127,9 @@ function getDetail() {
 			return
 	}
 	clearInterval(timer)
-	console.log('done')
+	fs.writeFile('data.txt',JSON.stringify(allData),function(){
+		console.log('done')
+	})
 	redo(0)
 }
 
@@ -261,6 +264,7 @@ function redo(i) {
 //执行爬虫任务
 getazUrl()
 
+
 //监控各status是否全部完成
 var timer = setInterval(getDetail, 1000)
 
@@ -268,6 +272,7 @@ var timer = setInterval(getDetail, 1000)
 //2019-3-22爬取各影音分集地址
 //2019-3-22完成全部影音分集地址 下周目标，分类a-z全部影音分集，并完成mp4视频播放地址爬取
 //2019-4-9基本完成所有内容，等待爬取
+//2019-4-15测试可用，优化查询速度
 
 function getPlayAddress() {
 	let count = 0;
@@ -328,15 +333,25 @@ function saveDb() {
 		var code = String.fromCharCode('a'.charCodeAt() + i)
 		for(let j = 0; j < allData[code].length; j++) {
 			(function(code, j) {
+				
+				let name = [];
+				pinyin(allData[code][j].name,{
+					style:pinyin.STYLE_NORMAL;
+				}).forEach((data,index)=>{
+					if(data){
+						name.push(data[0][0])
+					}
+				})
+				name = name.join('');
 				new Anime({
-					az: code,
-					uris: allData[code][j].uris,
-					play: allData[code][j].play,
-					titles: allData[code][j].titles,
-					name: allData[code][j].name,
-					introduce: allData[code][j].introduce,
-					img: allData[code][j].img,
-					tag: allData[code][j].tag
+					"az": code,
+					"uris": allData[code][j].uris,
+					"play": allData[code][j].play,
+					"titles": allData[code][j].titles,
+					"name": name,
+					"introduce": allData[code][j].introduce,
+					"img": allData[code][j].img,
+					"tag": allData[code][j].tag
 				}).save((err, res) => {
 					if(err) {
 						console.log(err)
