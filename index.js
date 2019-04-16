@@ -336,7 +336,7 @@ function saveDb() {
 				
 				let name = [];
 				pinyin(allData[code][j].name,{
-					style:pinyin.STYLE_NORMAL;
+					style:pinyin.STYLE_NORMAL
 				}).forEach((data,index)=>{
 					if(data){
 						name.push(data[0][0])
