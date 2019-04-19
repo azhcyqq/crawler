@@ -67,7 +67,7 @@ const c = new crawler({
 	jQuery: true,
 	encoding: 'utf8',
 	//爬取池最大20
-	maxConnections: 10,
+	maxConnections: 20,
 	timeout: 5000
 })
 //c.queue(azAnima)
@@ -127,7 +127,7 @@ function getDetail() {
 			return
 	}
 	clearInterval(timer)
-	fs.writeFile('data.txt',JSON.stringify(allData),function(){
+	fs.writeFile('data.txt', JSON.stringify(allData), function() {
 		console.log('done')
 	})
 	redo(0)
@@ -142,7 +142,7 @@ function getData(i) {
 	//状态数组
 	var tempObj = []
 	//初始化状态数组
-	for(var i = 0; i < len; i++) {
+	for(var x = 0; x < len; x++) {
 		tempObj.push(false)
 	}
 	//返回promise函数
@@ -219,7 +219,7 @@ function getData(i) {
 						tempArr[iCalc] = true;
 						//自增下标
 						iCalc++
-						console.log('爬取成功' + computed)
+						console.log(code + '爬取成功' + computed)
 						//此项爬取完成，自增
 						computed++;
 						_done();
@@ -264,7 +264,6 @@ function redo(i) {
 //执行爬虫任务
 getazUrl()
 
-
 //监控各status是否全部完成
 var timer = setInterval(getDetail, 1000)
 
@@ -278,22 +277,21 @@ function getPlayAddress() {
 	let count = 0;
 	let tempCount = 0;
 	let tempCount_d = 0;
+	let isDone = false;
 	for(let i in allData) {
 		for(let j = 0; j < allData[i].length; j++) {
 			for(let k = 0; k < allData[i][j].uris.length; k++) {
 				(function(i, j, k) {
 					c.queue({
+						if(isDone)
+						{
+							return
+						}
 						uri: allData[i][j].uris[k],
 						callback: function(err, res, done) {
 							let $　 = res.$;
 							if(!$ || !$('#player_iframe') || !$('#player_iframe')[0]) {
 								console.log('错误')
-								if(i === 'z') {
-									tempCount++;
-									if(tempCount_d === allData[i][j].length - 1) {
-										tempCount_d++;
-									}
-								}
 								done();
 								return
 							}
@@ -301,22 +299,18 @@ function getPlayAddress() {
 							allData[i][j].play[k] = video;
 							console.log('爬取播放地址成功' + i + '中第' + j + '中的第' + k + '集' + (count++) + '个');
 							done();
-							if(i === 'z') {
-								tempCount++;
-								if(tempCount === allData[i].length - 1) {
-									tempCount_d++
-									if(tempCount_d === allData[i][j].length - 1) {
-										console.log('全部爬取完成')
-										fs.writeFile('index.html', JSON.stringify(allData), function(err) {
-											if(err) {
-												console.log('文件写入失败')
-												return
-											}
-											console.log('写入成功啊啊啊啊啊啊')
-										})
-										saveDb();
+
+							if(i === 'z' && j === allData[i].length - 1 && k === allData[i][j].length - 1) {
+								isDone = true;
+								console.log('全部爬取完成')
+								fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
+									if(err) {
+										console.log('文件写入失败')
+										return
 									}
-								}
+									console.log('写入成功啊啊啊啊啊啊')
+								})
+								saveDb();
 							}
 						}
 					})
@@ -333,12 +327,12 @@ function saveDb() {
 		var code = String.fromCharCode('a'.charCodeAt() + i)
 		for(let j = 0; j < allData[code].length; j++) {
 			(function(code, j) {
-				
+
 				let name = [];
-				pinyin(allData[code][j].name,{
-					style:pinyin.STYLE_NORMAL
-				}).forEach((data,index)=>{
-					if(data){
+				pinyin(allData[code][j].name, {
+					style: pinyin.STYLE_NORMAL
+				}).forEach((data, index) => {
+					if(data) {
 						name.push(data[0][0])
 					}
 				})
