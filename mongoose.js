@@ -15,6 +15,10 @@ let crawlerData = new Schema({
 	titles:{
 		type:Array,
 	},
+	smallname:{
+		type:String,
+		index:true
+	},
 	name:{
 		type:String,
 		index:true
@@ -28,6 +32,9 @@ let crawlerData = new Schema({
 	tag:{
 		type:Array,
 		index:true
+	},
+	hot:{
+		type:Number
 	}
 },{
 	collection:'animes'

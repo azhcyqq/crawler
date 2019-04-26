@@ -262,7 +262,7 @@ function redo(i) {
 }
 
 //执行爬虫任务
-getazUrl()
+//getazUrl()
 
 //监控各status是否全部完成
 var timer = setInterval(getDetail, 1000)
@@ -282,16 +282,28 @@ function getPlayAddress() {
 		for(let j = 0; j < allData[i].length; j++) {
 			for(let k = 0; k < allData[i][j].uris.length; k++) {
 				(function(i, j, k) {
-					c.queue({
-						if(isDone)
+					if(isDone)
 						{
 							return
 						}
+					c.queue({
 						uri: allData[i][j].uris[k],
 						callback: function(err, res, done) {
 							let $　 = res.$;
 							if(!$ || !$('#player_iframe') || !$('#player_iframe')[0]) {
 								console.log('错误')
+								if(i === 'z' && j === allData[i].length - 1) {
+									isDone = true;
+									console.log('全部爬取完成')
+									fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
+										if(err) {
+											console.log('文件写入失败')
+											return
+										}
+										console.log('写入成功啊啊啊啊啊啊')
+									})
+									saveDb();
+								}
 								done();
 								return
 							}
@@ -300,7 +312,7 @@ function getPlayAddress() {
 							console.log('爬取播放地址成功' + i + '中第' + j + '中的第' + k + '集' + (count++) + '个');
 							done();
 
-							if(i === 'z' && j === allData[i].length - 1 && k === allData[i][j].length - 1) {
+							if(i === 'z' && j === allData[i].length - 1) {
 								isDone = true;
 								console.log('全部爬取完成')
 								fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
@@ -333,19 +345,22 @@ function saveDb() {
 					style: pinyin.STYLE_NORMAL
 				}).forEach((data, index) => {
 					if(data) {
-						name.push(data[0][0])
+						name.push(data[0].charAt(0))
 					}
 				})
-				name = name.join('');
+				smallname = name.join('').toLowerCase();
+				let hot = Math.round(Math.random()*3)>=2.5?1:0;
 				new Anime({
 					"az": code,
 					"uris": allData[code][j].uris,
 					"play": allData[code][j].play,
 					"titles": allData[code][j].titles,
-					"name": name,
+					"name": allData[code][j].name,
+					"smallname": smallname,
 					"introduce": allData[code][j].introduce,
 					"img": allData[code][j].img,
-					"tag": allData[code][j].tag
+					"tag": allData[code][j].tag,
+					"hot": hot,
 				}).save((err, res) => {
 					if(err) {
 						console.log(err)
@@ -358,3 +373,9 @@ function saveDb() {
 		}
 	}
 }
+
+//
+fs.readFile('index1.html','utf8',function(err,data){
+	allData = JSON.parse(data.toString());
+	saveDb();
+})
