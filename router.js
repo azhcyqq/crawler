@@ -46,6 +46,15 @@ router.get('/getCount',function(req,res){
 		res.end();
 	})
 })
+
+router.get('/gethottag',function(req,res){
+	let tag = req.query.tag;
+	detail.find({"tag":tag,"hot":1},function(err,data){
+		res.send(data);
+		res.end();
+	}).limit(10)
+})
+
 router.get('/getTag',function(req,res){
 	detail.distinct('tag',{},function(idontknow,data){
 		res.send(data);
@@ -71,17 +80,14 @@ router.get('/findAlike',function(req,res){
 })
 router.get('/getlunbo',function(req,res){
 	let num = req.query.num;
-	if(!!num){
-		detail.find({},function(err,data){
-			res.send(data);
-			res.end();
-		}).limit(num*3)
-	}else{
-		detail.find({},function(err,data){
-			res.send(data);
-			res.end();
-		}).limit(9)
+	if(!!!num){
+		num=9
 	}
+	console.log(num)
+	detail.aggregate([{$sample:{size:num*1}}]).exec(function(err,data){
+		res.send(data);
+		res.end();
+	})
 })
 
 router.get('/gethot',function(req,res){
@@ -101,7 +107,15 @@ router.get('/getRank',function(req,res){
 	detail.find()
 })
 
-
+router.get('/getweek',function(req,res){
+	let dateWeek=[1,2,3,4,5,6,7]
+	let num = 38;
+	console.log(num)
+	detail.find({"date":{$in:dateWeek}},function(err,data){
+		res.send(data);
+		res.end();
+	}).limit(num)
+})
 
 router.get('/getsmallname',function(req,res){
 	let reg = new RegExp(req.body.regname)
@@ -109,6 +123,13 @@ router.get('/getsmallname',function(req,res){
 		res.send(data);
 		res.end();
 	}).limit(35)
+})
+
+router.get('/getaz',function(req,res){
+	detail.find({az:"d"},function(err,data){
+		res.send(data);
+		res.end();
+	})
 })
 module.exports = router;
 //使用到的数据库操作方式
