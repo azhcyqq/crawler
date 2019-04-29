@@ -35,6 +35,12 @@ let crawlerData = new Schema({
 	},
 	hot:{
 		type:Number,
+	},
+	date:{
+		type:Number,
+	},
+	rank:{
+		type:Number,
 	}
 })
 

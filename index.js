@@ -349,7 +349,10 @@ function saveDb() {
 					}
 				})
 				smallname = name.join('').toLowerCase();
+				let riqi = Math.ceil(Math.random()*6);
 				let hot = Math.round(Math.random()*3)>=2.5?1:0;
+				let rank = Math.random()<0.043?Math.ceil(Math.random()*10000+10000):0;
+				console.log(rank)
 				new Anime({
 					"az": code,
 					"uris": allData[code][j].uris,
@@ -361,6 +364,8 @@ function saveDb() {
 					"img": allData[code][j].img,
 					"tag": allData[code][j].tag,
 					"hot": hot,
+					"date":riqi,
+					"rank":rank,
 				}).save((err, res) => {
 					if(err) {
 						console.log(err)

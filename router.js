@@ -17,8 +17,9 @@ router.all("*",function(req,res,next){
         next();
 })
 router.get('/getAnime',function(req,res){
-	let name = req.query.name;
+	let name = new RegExp(req.query.name,"ig");
 	let num = req.query.num;
+	console.log(name)
 	if(!!num){
 		detail.find({},function(err,data){
 			res.send(data)
@@ -41,7 +42,6 @@ router.get('/getAnime',function(req,res){
 router.get('/getCount',function(req,res){
 	let tag = req.query.tag;
 	detail.find({"tag":tag}).count(function(err,data){
-		console.log(data)
 		res.send({page:data});
 		res.end();
 	})
@@ -83,7 +83,6 @@ router.get('/getlunbo',function(req,res){
 	if(!!!num){
 		num=9
 	}
-	console.log(num)
 	detail.aggregate([{$sample:{size:num*1}}]).exec(function(err,data){
 		res.send(data);
 		res.end();
@@ -94,9 +93,7 @@ router.get('/gethot',function(req,res){
 	let small = req.query.small;
 	let num = small==1?15:6;
 	let page = small==1?req.query.page:0;
-	console.log(num,page)
 	detail.find({"hot":1},function(err,data){
-//		console.log(data)
 		res.send(data);
 		res.end();
 	}).limit(num*1).skip(page*10)
@@ -104,13 +101,16 @@ router.get('/gethot',function(req,res){
 
 
 router.get('/getRank',function(req,res){
-	detail.find()
+	console.log(1)
+	detail.$where('this.rank>0').sort({'rank':-1}).limit(100).exec(function(err,data){
+		res.send(data);
+		res.end();
+	})
 })
 
 router.get('/getweek',function(req,res){
 	let dateWeek=[1,2,3,4,5,6,7]
 	let num = 38;
-	console.log(num)
 	detail.find({"date":{$in:dateWeek}},function(err,data){
 		res.send(data);
 		res.end();
@@ -118,7 +118,7 @@ router.get('/getweek',function(req,res){
 })
 
 router.get('/getsmallname',function(req,res){
-	let reg = new RegExp(req.body.regname)
+	let reg = new RegExp(req.query.regname)
 	detail.find({smallname:reg},function(err,data){
 		res.send(data);
 		res.end();
