@@ -19,7 +19,6 @@ router.all("*",function(req,res,next){
 router.get('/getAnime',function(req,res){
 	let name = new RegExp(req.query.name,"ig");
 	let num = req.query.num;
-	console.log(name)
 	if(!!num){
 		detail.find({},function(err,data){
 			res.send(data)
@@ -101,7 +100,6 @@ router.get('/gethot',function(req,res){
 
 
 router.get('/getRank',function(req,res){
-	console.log(1)
 	detail.$where('this.rank>0').sort({'rank':-1}).limit(100).exec(function(err,data){
 		res.send(data);
 		res.end();
@@ -126,7 +124,8 @@ router.get('/getsmallname',function(req,res){
 })
 
 router.get('/getaz',function(req,res){
-	detail.find({az:"d"},function(err,data){
+	let az = req.query.az;
+	detail.find({"az":az},function(err,data){
 		res.send(data);
 		res.end();
 	})
