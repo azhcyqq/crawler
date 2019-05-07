@@ -160,5 +160,5 @@ module.exports = router;
 
 
 //for(let i=0;i<2283;i++){
-//	db.animes.update({},$set:{hot:Math.round(Math.random()*3)},{multi:true})
+//	db.animes.update({},$set:{hot:Math.round(Math.random()*3)},{multi:false})
 //}

@@ -41,6 +41,7 @@ var animaData = {
 }
 //记录错误数
 let errNum = 0;
+let allLen = 0;
 let numbercom = 0;
 //状态数组下标
 let iCalc = 0;
@@ -82,6 +83,10 @@ function getazUrl() {
 			c.queue({
 				uri: azAnima[num],
 				callback: function(err, res, done) {
+					if(err){
+						errNum++;
+						return ;
+					}
 					let $ = res.$;
 					let aList = $('.anime_list dl dt a')
 					let a = String.fromCharCode('a'.charCodeAt() + num)
@@ -222,6 +227,7 @@ function getData(i) {
 						console.log(code + '爬取成功' + computed)
 						//此项爬取完成，自增
 						computed++;
+						allLen++;
 						_done();
 					}
 				})
@@ -290,20 +296,21 @@ function getPlayAddress() {
 						uri: allData[i][j].uris[k],
 						callback: function(err, res, done) {
 							let $　 = res.$;
+							allLen--;
 							if(!$ || !$('#player_iframe') || !$('#player_iframe')[0]) {
 								console.log('错误')
-								if(i === 'z' && j === allData[i].length - 1) {
-									isDone = true;
-									console.log('全部爬取完成')
-									fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
-										if(err) {
-											console.log('文件写入失败')
-											return
-										}
-										console.log('写入成功啊啊啊啊啊啊')
-									})
-									saveDb();
-								}
+//								if(i === 'z' && j === allData[i].length - 1) {
+//									isDone = true;
+//									console.log('全部爬取完成')
+//									fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
+//										if(err) {
+//											console.log('文件写入失败')
+//											return
+//										}
+//										console.log('写入成功啊啊啊啊啊啊')
+//									})
+//									saveDb();
+//								}
 								done();
 								return
 							}
@@ -312,10 +319,20 @@ function getPlayAddress() {
 							console.log('爬取播放地址成功' + i + '中第' + j + '中的第' + k + '集' + (count++) + '个');
 							done();
 
-							if(i === 'z' && j === allData[i].length - 1) {
-								isDone = true;
-								console.log('全部爬取完成')
-								fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
+//							if(i === 'z' && j === allData[i].length - 1) {
+//								isDone = true;
+//								console.log('全部爬取完成')
+//								fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
+//									if(err) {
+//										console.log('文件写入失败')
+//										return
+//									}
+//									console.log('写入成功啊啊啊啊啊啊')
+//								})
+//								saveDb();
+//							}
+							if(allLen===0){
+								fs.writeFile('index2.html', JSON.stringify(allData), function(err) {
 									if(err) {
 										console.log('文件写入失败')
 										return
@@ -323,6 +340,7 @@ function getPlayAddress() {
 									console.log('写入成功啊啊啊啊啊啊')
 								})
 								saveDb();
+								done()
 							}
 						}
 					})
@@ -369,7 +387,6 @@ function saveDb() {
 				}).save((err, res) => {
 					if(err) {
 						console.log(err)
-						errNum++
 					} else {
 						console.log('succeed')
 					}

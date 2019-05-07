@@ -9,12 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parse": "^0.1.0",
     "body-parser": "^1.18.3",
-    "cheerio": "^1.0.0-rc.2",
-    "crawler": "^1.2.0",
+    "cheerio": "^1.0.0-rc.3",
+    "crawler": "^1.2.1",
     "express": "^4.16.4",
+    "iconv-lite": "^0.4.24",
     "mongodb": "^3.2.2",
-    "mongoose": "^5.4.21",
+    "mongoose": "^5.5.4",
+    "pinyin": "^2.8.3",
     "request": "^2.88.0"
   }
 }
