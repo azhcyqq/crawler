@@ -196,9 +196,9 @@ function getData(i) {
 						var _done = done;
 						//					getPlayAddress(data).then((res)=>{
 						//						//成功
-						//						
+						//
 						////						获取播放地址
-						//						data.play = res;	
+						//						data.play = res;
 						//						判断结构是否存在，某些情况下可能不存在，若不存在，直接跳过
 						if(!$('h1') || !$('.d_label2') || !$('.detail dt img') || !$('.d_label2')[2] || !$('.d_label2')[2].children[1] || !$('.detail dt img')[0]) {
 							//改变对应状态数组为真
@@ -353,6 +353,7 @@ function getPlayAddress() {
 //暂时停用，测试其他功能
 //保存至mongodb数据库
 function saveDb() {
+  let unitID = 0;
 	for(let i = 0; i < azAnima.length; i++) {
 		var code = String.fromCharCode('a'.charCodeAt() + i)
 		for(let j = 0; j < allData[code].length; j++) {
@@ -365,12 +366,12 @@ function saveDb() {
 					if(data) {
 						name.push(data[0].charAt(0))
 					}
-				})
+        })
+        unitID++;
 				smallname = name.join('').toLowerCase();
 				let riqi = Math.ceil(Math.random()*6);
 				let hot = Math.round(Math.random()*3)>=2.5?1:0;
 				let rank = Math.random()<0.043?Math.ceil(Math.random()*10000+10000):0;
-				console.log(rank)
 				new Anime({
 					"az": code,
 					"uris": allData[code][j].uris,
@@ -383,7 +384,8 @@ function saveDb() {
 					"tag": allData[code][j].tag,
 					"hot": hot,
 					"date":riqi,
-					"rank":rank,
+          "rank":rank,
+          "unitID":unitID,
 				}).save((err, res) => {
 					if(err) {
 						console.log(err)

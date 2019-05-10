@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose')
 const detail = require('./mongoose.js')
+const userSave = require('./user.js')
+const userGet = require('./users.js')
 mongoose.connect('mongodb://localhost:27017/crawlerDatanew');
 
 router.all("*",function(req,res,next){
@@ -126,6 +128,39 @@ router.get('/getsmallname',function(req,res){
 router.get('/getaz',function(req,res){
 	let az = req.query.az;
 	detail.find({"az":az},function(err,data){
+		res.send(data);
+		res.end();
+	})
+})
+
+router.post('/regiest',function(req,res){
+	let body = req.body;
+	new userSave({
+		username:body.username,
+		password:body.password,
+		phone:body.phone,
+		favority:body.favority
+	}).save((err)=>{
+		if(err){
+			res.send({"ok":false})
+			res.end();
+		}
+		res.send({"ok":true})
+		res.end();
+	})
+})
+
+router.get('/unitsure',function(req,res){
+	let username = req.query.username;
+	userGet.find({username:username},function(err,data){
+		res.send(data)
+		res.end();
+	})
+})
+
+router.post('/login',function(req,res){
+	let body = req.body;
+	userGet.find({username:body.username,password:body.password},function(err,data){
 		res.send(data);
 		res.end();
 	})

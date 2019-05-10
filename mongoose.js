@@ -41,7 +41,10 @@ let crawlerData = new Schema({
 	},
 	rank:{
 		type:Number
-	}
+  },
+  unitID:{
+    type:Number
+  }
 },{
 	collection:'animes'
 })

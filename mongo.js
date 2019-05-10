@@ -41,7 +41,11 @@ let crawlerData = new Schema({
 	},
 	rank:{
 		type:Number,
-	}
+  },
+  unitID:{
+    type:Number,
+    index:true
+  }
 })
 
 module.exports = mongoose.model('Anime', crawlerData);
