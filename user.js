@@ -30,6 +30,10 @@ let userInfo = new Schema({
   favority:{
     type:Array,
     default:[]
+  },
+  img:{
+  	type:String,
+  	default:''
   }
 })
 module.exports = mongoose.model('user',userInfo);

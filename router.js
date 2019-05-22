@@ -160,8 +160,17 @@ router.get('/unitsure',function(req,res){
 
 router.post('/login',function(req,res){
 	let body = req.body;
-	userGet.find({username:body.username,password:body.password},function(err,data){
+	userGet.find({'username':body.username,'password':body.password},function(err,data){
+		console.log(data)
 		res.send(data);
+		res.end();
+	})
+})
+
+router.post('/update',function(req,res){
+	let body = req.body;
+	console.log(body)
+	userGet.findOneAndUpdate({'username':body.username},{ $set: { collections: body.collections,seebefore: body.seebefore }},function(){
 		res.end();
 	})
 })

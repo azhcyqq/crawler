@@ -13,6 +13,7 @@
     "body-parser": "^1.18.3",
     "cheerio": "^1.0.0-rc.3",
     "crawler": "^1.2.1",
+    "crypto": "^1.0.1",
     "express": "^4.16.4",
     "iconv-lite": "^0.4.24",
     "mongodb": "^3.2.2",
