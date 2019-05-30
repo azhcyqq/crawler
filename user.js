@@ -1,5 +1,5 @@
 let mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost:27017/crawlerDatanew');
+mongoose.connect('mongodb://localhost:27017/anime');
 let Schema = mongoose.Schema;
 let userInfo = new Schema({
   username:{

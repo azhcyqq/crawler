@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/crawlerDatanew');
+mongoose.connect('mongodb://localhost:27017/anime');
 let Schema = mongoose.Schema;
 let crawlerData = new Schema({
 	az:{
@@ -41,11 +41,14 @@ let crawlerData = new Schema({
 	},
 	rank:{
 		type:Number,
-  },
-  unitID:{
-    type:Number,
-    index:true
-  }
+  	},
+  	unitID:{
+   		type:Number,
+    	index:true
+  	},
+  	comment:{
+  		type:Array,
+  	}
 })
 
 module.exports = mongoose.model('Anime', crawlerData);

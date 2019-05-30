@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const detail = require('./mongoose.js')
 const userSave = require('./user.js')
 const userGet = require('./users.js')
-mongoose.connect('mongodb://localhost:27017/crawlerDatanew');
+mongoose.connect('mongodb://localhost:27017/anime');
 
 router.all("*",function(req,res,next){
     //设置允许跨域的域名，*代表允许任意域名跨域
@@ -58,6 +58,7 @@ router.get('/gethottag',function(req,res){
 
 router.get('/getTag',function(req,res){
 	detail.distinct('tag',{},function(idontknow,data){
+		console.log(data)
 		res.send(data);
 		res.end();
 	})
@@ -135,6 +136,7 @@ router.get('/getaz',function(req,res){
 
 router.post('/regiest',function(req,res){
 	let body = req.body;
+	console.log(body)
 	new userSave({
 		username:body.username,
 		password:body.password,
@@ -167,10 +169,43 @@ router.post('/login',function(req,res){
 	})
 })
 
+router.post('/getAnimeById',function(req,res){
+	let id = req.body.id;
+	detail.find({"unitID":{$in:id}},function(err,data){
+		res.send(data);
+		res.end();
+	})
+})
 router.post('/update',function(req,res){
 	let body = req.body;
+	let name = req.query.name;
+	if(name == undefined){
+		name = body.username	
+	}
 	console.log(body)
-	userGet.findOneAndUpdate({'username':body.username},{ $set: { collections: body.collections,seebefore: body.seebefore }},function(){
+	console.log(name)
+	userGet.findOneAndUpdate({'username':body.username},{ $set: {username:name,phone:body.phone,favority:body.favority,collections: body.collections,seebefore: body.seebefore }},function(err,data){
+		console.log(data)
+		res.end();
+	})
+})
+
+router.post('/gettuijian',function(req,res){
+	let user = req.body;
+	let i = Math.floor(Math.random()*10)
+	detail.find({"tag":{$in:user.favority}},function(err,data){
+		console.log(data)
+		res.send(data);
+		res.end();
+	}).limit(10).skip(10*i)
+})
+
+
+router.post('/addComment',function(req,res){
+	let body = req.body;
+	console.log(body)
+	detail.findOneAndUpdate({"unitID":body.unitID},{ $set:{"comment":body.comment} },function(data){
+		console.log(data)
 		res.end();
 	})
 })

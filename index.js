@@ -268,7 +268,7 @@ function redo(i) {
 }
 
 //执行爬虫任务
-//getazUrl()
+getazUrl()
 
 //监控各status是否全部完成
 var timer = setInterval(getDetail, 1000)
@@ -299,18 +299,18 @@ function getPlayAddress() {
 							allLen--;
 							if(!$ || !$('#player_iframe') || !$('#player_iframe')[0]) {
 								console.log('错误')
-//								if(i === 'z' && j === allData[i].length - 1) {
-//									isDone = true;
-//									console.log('全部爬取完成')
-//									fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
-//										if(err) {
-//											console.log('文件写入失败')
-//											return
-//										}
-//										console.log('写入成功啊啊啊啊啊啊')
-//									})
-//									saveDb();
-//								}
+								if(i === 'z' && j === allData[i].length - 1) {
+									isDone = true;
+									console.log('全部爬取完成')
+									fs.writeFile('index2.html', JSON.stringify(allData), function(err) {
+										if(err) {
+											console.log('文件写入失败')
+											return
+										}
+										console.log('写入成功啊啊啊啊啊啊')
+									})
+									saveDb();
+								}
 								done();
 								return
 							}
@@ -319,19 +319,9 @@ function getPlayAddress() {
 							console.log('爬取播放地址成功' + i + '中第' + j + '中的第' + k + '集' + (count++) + '个');
 							done();
 
-//							if(i === 'z' && j === allData[i].length - 1) {
-//								isDone = true;
-//								console.log('全部爬取完成')
-//								fs.writeFile('index1.html', JSON.stringify(allData), function(err) {
-//									if(err) {
-//										console.log('文件写入失败')
-//										return
-//									}
-//									console.log('写入成功啊啊啊啊啊啊')
-//								})
-//								saveDb();
-//							}
-							if(allLen===0){
+							if(i === 'z' && j === allData[i].length - 1) {
+								isDone = true;
+								console.log('全部爬取完成')
 								fs.writeFile('index2.html', JSON.stringify(allData), function(err) {
 									if(err) {
 										console.log('文件写入失败')
@@ -340,8 +330,18 @@ function getPlayAddress() {
 									console.log('写入成功啊啊啊啊啊啊')
 								})
 								saveDb();
-								done()
 							}
+//							if(allLen===0){
+//								fs.writeFile('index2.html', JSON.stringify(allData), function(err) {
+//									if(err) {
+//										console.log('文件写入失败')
+//										return
+//									}
+//									console.log('写入成功啊啊啊啊啊啊')
+//								})
+//								saveDb();
+//								done()
+//							}
 						}
 					})
 				})(i, j, k)
@@ -372,6 +372,9 @@ function saveDb() {
 				let riqi = Math.ceil(Math.random()*6);
 				let hot = Math.round(Math.random()*3)>=2.5?1:0;
 				let rank = Math.random()<0.043?Math.ceil(Math.random()*10000+10000):0;
+				if(uris.length === 0 || play === 0 || introduce === '' || titles.length === 0){
+					continue
+				}
 				new Anime({
 					"az": code,
 					"uris": allData[code][j].uris,
@@ -399,7 +402,7 @@ function saveDb() {
 }
 
 //
-fs.readFile('index1.html','utf8',function(err,data){
-	allData = JSON.parse(data.toString());
-	saveDb();
-})
+//fs.readFile('index1.html','utf8',function(err,data){
+//	allData = JSON.parse(data.toString());
+//	saveDb();
+//})
